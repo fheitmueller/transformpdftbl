@@ -1,0 +1,10 @@
+Package: transformpdftbl
+Type: Package
+Title: Transforming the output from tables extracted from PDFs
+Version: 0.1.0
+Author: Frederik Heitmüller
+Maintainer: Frederik Heitmüller <fheitmueller@gmx.de>
+Description: When a table is exported in a pdf, often the content of one line is spread over multiple lines. This package provides a function that can merges lines that belong to one line in the original pdf table.
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
