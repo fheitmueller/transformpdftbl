@@ -8,3 +8,7 @@ Description: When a table is exported in a pdf, often the content of one line is
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
+Suggests:
+  pdftools,
+  tabulizer
+RoxygenNote: 7.1.1
