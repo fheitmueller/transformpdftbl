@@ -4,31 +4,33 @@
 #' This function copies lines that belong together in one and deletes the rest.
 #'
 #' @param df is the dataframe to be transformed
-#' @param pl is a vector containing the numbers of the "principle lines". Can for example be obtained by a formula like the following: which(is.na(df[,1]), arr.ind=TRUE)
+#' @param pl is a vector containing the numbers of the "principle lines". Can for example be obtained by a formula like the following: which(is.na(df[,1]), arr.ind = TRUE)
+#' @param column is a vector containing the names of the columns to be copied. Defaults to all columns.
+#' @param separator is the separator between the copied columns. Defaults to 1 whitespace.
 #' @return returns the transformed dataframe
+#' @import dplyr
+#' @import purrr
 #' @export
 
 
-t_pdf_tbl <- function(df, pl){
-l = length(pl)  # l tells us how many "principal" lines there are
-lt = nrow(df) # lt tells us how many lines there are in total
-##now a loop to copy the lines to each other
-for (k in 1:l){
-  ## the following feature solves the problem of the last lines at the end
-  if (k<l){
-    num = pl[k+1]-pl[k]-1
-  }else {
-    num = lt-pl[k]
+t_pdf_tbl <- function(df, pl, column = NULL, separator = " ") {
+  if (is.null(column)) {
+    column <- colnames(df)
   }
-  if(num>0){
-    ##here a loop is used to copy one line after the other separated by a space
-    for (j in 1:num){
-      df[pl[k],] = paste(df[pl[k],], df[pl[k]+j,], sep=" ")
+  end_lines <- pl[-1]
+  end_lines <- end_lines - 1
+  end_lines <- append(end_lines, nrow(df))
+  column_to_paste <- map(column, function(x_1, y_1){dplyr::pull(y_1, x_1)}, df)
+  df <- df[pl, ]
+  for (i in 1:length(column_to_paste)) {
+    paste_together <- function(x_1, y_1, column_to_paste){
+      together <- paste(column_to_paste[x_1:y_1], collapse = separator)
+      return(together)
     }
-  } else {}
-}
-df<- df[pl,]
-return(df)
+    together <- purrr::map2_chr(pl, end_lines, paste_together, column_to_paste[[i]])
+    df[, column[i]] <- together
+  }
+  return(df)
 }
 
 
